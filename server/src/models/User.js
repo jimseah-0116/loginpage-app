@@ -15,7 +15,12 @@ const User = sequelize.define('User', {
     },
     password: {
         type: DataTypes.STRING(100),
-        allowNull: false
+        allowNull: false,
+        set(value) {
+            // Hash the password before storing it
+            const hashedPassword = bcrypt.hashSync(value, 10);
+            this.setDataValue('password', hashedPassword);
+        }
     },
     nric: {
         type: DataTypes.STRING(9),
@@ -51,7 +56,7 @@ const User = sequelize.define('User', {
 
 // Instance method to check password
 User.prototype.checkPassword = async function(password) {
-    return await bcrypt.compare(password, this.password);
+    return bcrypt.compareSync(password, this.password);
 };
 
 module.exports = User;

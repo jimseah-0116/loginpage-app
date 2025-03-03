@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
 // Login controller
@@ -13,9 +12,8 @@ exports.login = async (req, res) => {
             return res.status(400).json({ message: 'Invalid username or password' });
         }
 
-        // Since we're using plain text passwords in our dummy data for now
-        // In production, you would use: const validPassword = await user.checkPassword(password);
-        const validPassword = password === user.password;
+        // Check password using bcrypt comparison
+        const validPassword = await user.checkPassword(password);
 
         if (!validPassword) {
             return res.status(400).json({ message: 'Invalid username or password' });
